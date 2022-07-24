@@ -43,30 +43,53 @@ namespace UsersAPI.Repos
             return user;
         }
 
-        public ResponseModel SaveUser(User user)
-        {
+        //public ResponseModel SaveUser(User user)
+        //{
             
 
-            ResponseModel model=new ResponseModel();
-            User TempUser=GetUserById(user.Id);
-            if (TempUser != null)
-            {
-                TempUser.FName = user.FName;
-                TempUser.LName=user.LName;
-                TempUser.BOD = user.BOD;
-                _context.Update<User>(TempUser);
-                model.Messsage = "Updated Successfully";
-            }   
-            else
-            {   
-                _context.Add<User>(user);
-                model.Messsage = "Added Successfully";
-            }
-               _context.SaveChanges();
-                model.IsSuccess = true;
-                return model;
+        //    ResponseModel model=new ResponseModel();
+        //    User TempUser=GetUserById(user.Id);
+        //    if (TempUser != null)
+        //    {
+        //        TempUser.FName = user.FName;
+        //        TempUser.LName=user.LName;
+        //        TempUser.BOD = user.BOD;
+        //        _context.Update<User>(TempUser);
+        //        model.Messsage = "Updated Successfully";
+        //    }   
+        //    else
+        //    {   
+        //        _context.Add<User>(user);
+        //        model.Messsage = "Added Successfully";
+        //    }
+        //       _context.SaveChanges();
+        //        model.IsSuccess = true;
+        //        return model;
+        //}
+
+
+        public ResponseModel Add(User user)
+        {
+            ResponseModel result = new ResponseModel();
+            _context.Add<User>(user);
+            result.IsSuccess = true;
+            _context.SaveChanges();
+            return result;
+            
         }
 
+        public ResponseModel Update(User user)
+        {
+            ResponseModel model= new ResponseModel();
+            User _temp=GetUserById(user.Id);
+            _temp.FName = user.FName;
+            _temp.LName = user.LName;
+            _context.Update<User>(_temp);
+            _context.SaveChanges();
+            model.IsSuccess=true;
+            return model;
+
+        }
 
 
         public ResponseModel DeleteUser(int Id)

@@ -35,9 +35,16 @@ namespace UsersAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveUser(User user)
+        public IActionResult Add(User user)
         {
-            var model=_userService.SaveUser(user);
+            var model=_userService.Add(user);
+            return Ok(model);
+        }
+
+        [HttpPut]
+        public IActionResult Update(User user)
+        {
+            var model=_userService.Update(user);
             return Ok(model);
         }
 

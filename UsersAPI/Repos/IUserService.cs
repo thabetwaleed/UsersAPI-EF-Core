@@ -9,7 +9,8 @@ namespace UsersAPI.Repos
     { 
         List<User> GetUsersList();   
         User GetUserById(int Id);        
-        ResponseModel SaveUser(User UserModel);         
+        ResponseModel Add(User UserModel);         
+        ResponseModel Update(User UserModel);         
         ResponseModel DeleteUser(int Id);
     }
 }
