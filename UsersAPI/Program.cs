@@ -12,7 +12,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<UserContext>(d => d.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString1")));
 builder.Services.AddScoped<IUserService, UserRepos>();
- 
+builder.Services.AddScoped<IPostService, PostRepos>();
+
 
 
 var app = builder.Build();

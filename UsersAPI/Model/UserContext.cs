@@ -9,6 +9,7 @@ namespace UsersAPI.Model
         }
 
         public DbSet<User>  users { get; set; }
+        public DbSet<Post> posts { get; set; }
 
 
     }

@@ -101,7 +101,7 @@ namespace UsersAPI.Repos
                 _context.Remove<User>(user);
                 _context.SaveChanges();
                 Model.IsSuccess = true;
-                Model.Messsage = "UserAddedSuccessfully";
+                Model.Messsage = "UserDeletedSuccessfully";
             }
             else
             {

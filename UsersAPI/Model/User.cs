@@ -9,5 +9,8 @@ namespace UsersAPI.Model
         public string LName { get; set; }
         public DateTime BOD { get; set; }
 
+        public ICollection<Post>? posts { get; set; }
+        
+
     }
 }
