@@ -1,11 +1,10 @@
 ﻿
 namespace UsersAPI.Model
 {
-    public class User
+    public class User:BaseModel
     {
         
-        public int Id { get; set; }
-        public string FName { get; set; }
+         public string FName { get; set; }
         public string LName { get; set; }
         public DateTime BOD { get; set; }
 

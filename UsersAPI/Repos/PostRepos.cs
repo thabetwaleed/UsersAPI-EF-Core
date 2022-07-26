@@ -10,6 +10,7 @@ namespace UsersAPI.Repos
             _context = context;
         }
 
+        
         public List<Post> GetPostsList()
         {
             List<Post> PostsList;
@@ -24,7 +25,7 @@ namespace UsersAPI.Repos
             return PostsList;
         }
 
-
+        
         public Post GetPostById(int Id)
         {
             Post post;

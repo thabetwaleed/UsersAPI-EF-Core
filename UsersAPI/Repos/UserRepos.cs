@@ -31,16 +31,7 @@ namespace UsersAPI.Repos
 
         public User GetUserById(int Id)
         {
-            User user;
-            try
-            {
-                user = _context.Find<User>(Id);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return user;
+            return _context.users.FirstOrDefault(c => c.Id == Id);
         }
 
         //public ResponseModel SaveUser(User user)

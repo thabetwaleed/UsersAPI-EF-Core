@@ -10,8 +10,8 @@ namespace UsersAPI.Controllers
     public class UsersController : ControllerBase
     {
 
-        IUserService _userService;
-        public UsersController(IUserService service)
+        INewUserRepo _userService;
+        public UsersController(INewUserRepo service)
         {
             _userService = service;
         }
@@ -19,7 +19,7 @@ namespace UsersAPI.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            var users=_userService.GetUsersList();
+            var users=_userService.Get();
             if (users == null)
                 return NotFound();
             return Ok(users);
@@ -28,7 +28,7 @@ namespace UsersAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
         {
-            var user = _userService.GetUserById(id);
+            var user = _userService.GetId(id);
             if (user == null)
                 return NotFound();
             return Ok(user);
@@ -51,8 +51,8 @@ namespace UsersAPI.Controllers
         [HttpDelete]
         public IActionResult DeleteUser(int id)
         {
-            var model=_userService.DeleteUser(id);
-            return Ok(model);
+            _userService.Delete(id);
+            return Ok();
         }
     }
 }

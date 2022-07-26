@@ -2,14 +2,14 @@
 
 namespace UsersAPI.Model
 {
-    public class Post
+    public class Post:BaseModel
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
+
+         public string Title { get; set; }
 
         [ForeignKey("UserId")]
         public int UserId { get; set; }
         
-        public User? user { get; set; }
+        public virtual User? user { get; set; }
     }
 }
