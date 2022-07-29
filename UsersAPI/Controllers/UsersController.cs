@@ -17,12 +17,17 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllUsers()
+        public IActionResult GetAllUsers([FromHeader] string Role)
         {
-            var users=_userService.Get();
-            if (users == null)
-                return NotFound();
-            return Ok(users);
+            if (Role=="Admin")
+            {
+                var users = _userService.Get();
+                if (users == null)
+                    return NotFound();
+                return Ok(users);
+
+            }
+           return BadRequest();
         }
 
         [HttpGet("{id}")]

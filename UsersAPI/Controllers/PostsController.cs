@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UsersAPI.Model;
 using UsersAPI.Repos;
@@ -15,12 +16,19 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllPosts()
+        public IActionResult GetAllPosts([FromHeader]string Role)
         {
-            var posts = _postService.Get();
-            if (posts == null)
-                return NotFound();
-            return Ok(posts);
+            //throw new Exception("error");
+            if (Role=="Admin")
+            {
+                var posts = _postService.Get();
+                if (posts == null)
+                    return NotFound();
+                return Ok(posts);
+            }
+            else
+                return BadRequest();
+            
         }
 
         [HttpGet("{id}")]

@@ -15,6 +15,7 @@ namespace UsersAPI.Repos
 
     }
 
+
     public class GenRepo<T>:IGenRepo<T> where T : class, IBaseModel
     {
         private readonly UserContext _context;
@@ -27,7 +28,7 @@ namespace UsersAPI.Repos
         public T Add(T model)
         {
              _context.Set<T>().Add(model);
-            _context.SaveChanges();
+             _context.SaveChanges();
             return model;
 
         }

@@ -6,7 +6,7 @@ namespace UsersAPI.Extensions
 {
     public static class MyExtensions
     {
-        public static void myser(this IServiceCollection serobj ,ConfigurationManager conf)
+        public static void myser( this IServiceCollection serobj ,ConfigurationManager conf)
         {
  
              serobj.AddDbContext<UserContext>(d => d.UseSqlServer(conf.GetConnectionString("ConnectionString1")));
