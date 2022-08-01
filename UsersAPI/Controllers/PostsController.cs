@@ -1,63 +1,76 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UsersAPI.Model;
 using UsersAPI.Repos;
+using UsersAPI.ViewModel;
+
 namespace UsersAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase
     {
+        IMapper _mapper;
         INewPostRepo _postService;
-        public PostsController(INewPostRepo postService)
+        public  PostsController(INewPostRepo postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult GetAllPosts([FromHeader]string Role)
+        //[Authorize(Roles ="Admin")]
+        public async Task<ActionResult<List<PostViewModel>>> GetAllPosts()
         {
             //throw new Exception("error");
-            if (Role=="Admin")
-            {
-                var posts = _postService.Get();
-                if (posts == null)
+             
+                var posts = await _postService.Get();
+            var PostsVM = _mapper.Map<List<PostViewModel>>(posts);
+
+
+            if (posts == null)
                     return NotFound();
-                return Ok(posts);
-            }
-            else
-                return BadRequest();
+                return Ok( PostsVM);
+            
             
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetPost(int id)
+        public async Task<ActionResult<PostViewModel>> GetPost(int id)
         {
-            var post = _postService.GetId(id);
+            var post =await _postService.GetId(id);
+            var PostsVM = _mapper.Map<PostViewModel>(post);
+
             if (post == null)
                 return NotFound();
-            return Ok(post);
+            return Ok(PostsVM);
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody]Post post)
+        public async Task<ActionResult<PostViewModel>> Add([FromBody]Post post)
         {
-            var model = _postService.Add(post);
-            return Ok(model);
+            var model = await _postService.Add(post);
+            var PostsVM = _mapper.Map<PostViewModel>(model);
+
+            return Ok(PostsVM);
         }
 
         [HttpPut]
-        public IActionResult Update(Post post)
+        public ActionResult<PostViewModel> Update(Post post)
         {
             var model = _postService.Update(post);
-            return Ok(model);
+            var PostsVM = _mapper.Map<PostViewModel>(model);
+
+            return Ok(PostsVM); 
         }
 
+
         [HttpDelete]
-        public IActionResult DeletePost(int id)
+        public async Task<IActionResult> DeletePost(int id)
         {
-              _postService.Delete(id);
+             await _postService.Delete(id);
             return Ok();
         }
     }

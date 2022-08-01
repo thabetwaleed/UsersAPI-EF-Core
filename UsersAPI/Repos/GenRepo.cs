@@ -1,4 +1,6 @@
-﻿using UsersAPI.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using UsersAPI.Model;
+
 
 namespace UsersAPI.Repos
 {
@@ -6,11 +8,11 @@ namespace UsersAPI.Repos
     
     public interface IGenRepo<T> where T : class
     {
-        public List<T> Get();
-        public T GetId(int id);
-        public T Add(T model);
+        public Task<List<T>> Get();
+        public ValueTask<T?> GetId(int id);
+        public Task<T> Add(T model);
         public T Update(T model);
-        public void Delete(int id);
+        public Task<T> Delete(int id);
                
 
     }
@@ -25,30 +27,34 @@ namespace UsersAPI.Repos
             _context = context;
         }
 
-        public T Add(T model)
+        public async Task<T>  Add(T model)
         {
-             _context.Set<T>().Add(model);
-             _context.SaveChanges();
-            return model;
+              await _context.Set<T>().AddAsync(model);
+              await  _context.SaveChangesAsync();
+             return model;
 
         }
 
-        public void Delete(int id)
+        public  async Task<T>  Delete(int id)
         {
-            var _temp = GetId(id);
-            _context.Set<T>().Remove(_temp);
-            _context.SaveChanges();
-
+             var _temp = await GetId(id);
+             _context.Set<T>().Remove(_temp);
+             await _context.SaveChangesAsync();
+            return _temp;
+            
         }
 
-        public List<T> Get()
+        public async Task<List<T>> Get()
         {
-            return _context.Set<T>().ToList();
+            var G = await _context.Set<T>().ToListAsync();
+            int c = 0;
+            return G;
         }
 
-        public T GetId(int id)
+        public ValueTask<T?> GetId(int id)
         {
-            return _context.Set<T>().Find(id);
+            ValueTask<T?> x =  _context.Set<T>().FindAsync(id);
+            return x;
         }
 
         public T Update(T model)

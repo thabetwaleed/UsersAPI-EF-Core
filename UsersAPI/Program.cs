@@ -3,6 +3,7 @@ using UsersAPI.Model;
 using UsersAPI.Repos;
 using UsersAPI.Extensions;
 using UsersAPI;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,12 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.myser(builder.Configuration);
-
+    
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());//For automapper
+//builder.Services.AddAutoMapper(typeof(Profile));
+
 
 var app = builder.Build();
 
@@ -27,8 +32,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
 }
-app.UseExceptionHandleMiddleware();
+//app.UseExceptionHandleMiddleware();//custom middleware
 
 //app.Use(async (context, next) =>
 //{

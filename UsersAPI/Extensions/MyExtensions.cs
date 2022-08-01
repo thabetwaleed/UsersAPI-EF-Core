@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using UsersAPI.Model;
 using UsersAPI.Repos;
 
@@ -12,7 +13,7 @@ namespace UsersAPI.Extensions
              serobj.AddDbContext<UserContext>(d => d.UseSqlServer(conf.GetConnectionString("ConnectionString1")));
              serobj.AddScoped<INewUserRepo, NewUserRepo>();
              serobj.AddScoped<INewPostRepo, NewPostRepo>();
-             
+              
 
 
 
