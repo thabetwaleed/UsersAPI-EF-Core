@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UsersAPI.Fillters;
 using UsersAPI.Model;
 using UsersAPI.Repos;
 using UsersAPI.ViewModel;
@@ -21,13 +22,12 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles ="Admin")]
+        [Roles]
         public async Task<ActionResult<List<PostViewModel>>> GetAllPosts()
         {
             //throw new Exception("error");
-             
-                var posts = await _postService.Get();
-            var PostsVM = _mapper.Map<List<PostViewModel>>(posts);
+            var posts = await _postService.Get<PostViewModel>();
+            var PostsVM = _mapper.Map<List<Post>>(posts);
 
 
             if (posts == null)
@@ -38,9 +38,10 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Roles]
         public async Task<ActionResult<PostViewModel>> GetPost(int id)
         {
-            var post =await _postService.GetId(id);
+            var post =await _postService.GetId<PostViewModel>(id);
             var PostsVM = _mapper.Map<PostViewModel>(post);
 
             if (post == null)
@@ -49,18 +50,18 @@ namespace UsersAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PostViewModel>> Add([FromBody]Post post)
+        public async Task<ActionResult<PostViewModel>> Add([FromBody]PostViewModel post)
         {
-            var model = await _postService.Add(post);
+            var model = await _postService.Add(_mapper.Map<Post>(post));
             var PostsVM = _mapper.Map<PostViewModel>(model);
 
             return Ok(PostsVM);
         }
 
         [HttpPut]
-        public ActionResult<PostViewModel> Update(Post post)
+        public ActionResult<PostViewModel> Update(PostViewModel post)
         {
-            var model = _postService.Update(post);
+            var model = _postService.Update(_mapper.Map<Post>(post));
             var PostsVM = _mapper.Map<PostViewModel>(model);
 
             return Ok(PostsVM); 
@@ -70,7 +71,7 @@ namespace UsersAPI.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePost(int id)
         {
-             await _postService.Delete(id);
+             await _postService.Delete<PostViewModel>(id);
             return Ok();
         }
     }
