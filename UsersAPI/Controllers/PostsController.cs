@@ -21,8 +21,9 @@ namespace UsersAPI.Controllers
             _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
-        [Roles]
+        //[Roles]
         public async Task<ActionResult<List<PostViewModel>>> GetAllPosts()
         {
             //throw new Exception("error");
@@ -38,7 +39,7 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [Roles]
+       // [Roles]
         public async Task<ActionResult<PostViewModel>> GetPost(int id)
         {
             var post =await _postService.GetId<PostViewModel>(id);

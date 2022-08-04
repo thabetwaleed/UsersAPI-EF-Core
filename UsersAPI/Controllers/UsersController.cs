@@ -5,6 +5,7 @@ using UsersAPI.Repos;
 using AutoMapper;
 using UsersAPI.ViewModel;
 using UsersAPI.Fillters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UsersAPI.Controllers
 {
@@ -19,10 +20,11 @@ namespace UsersAPI.Controllers
         {
             _userService = service;
             _mapper = mapper;
-        }  
+        }
 
+        [Authorize]
         [HttpGet]
-        [Roles]
+        //[Roles]
         public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()//use IEnumerable or List
         {
             

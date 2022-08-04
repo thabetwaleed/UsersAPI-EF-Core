@@ -37,13 +37,13 @@ namespace UsersAPI.Repos
              return model;
 
         }
-
-        public async Task<T>  Delete<TVM>(int id) where TVM:class,IBaseModel
+        
+        public async Task<TVM>  Delete<TVM>(int id) where TVM:class,IBaseModel
         {
              var _temp = await GetId<TVM>(id);
              _context.Set<T>().Remove(_mapper.Map<T>(_temp));
               await _context.SaveChangesAsync();
-              return _mapper.Map<T>(_temp);
+              return _mapper.Map<TVM>(_temp);
 
         }
 
@@ -66,9 +66,6 @@ namespace UsersAPI.Repos
             return model;
         }
 
-        Task<TVM> IGenRepo<T>.Delete<TVM>(int id)
-        {
-            throw new NotImplementedException();
-        }
+         
     }
 }

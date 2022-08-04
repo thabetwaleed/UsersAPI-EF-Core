@@ -31,7 +31,7 @@ namespace UsersAPI.Repos
 
         public User GetUserById(int Id)
         {
-            return _context.users.FirstOrDefault(c => c.Id == Id);
+            return _context.User.FirstOrDefault(c => c.Id == Id);
         }
 
         //public ResponseModel SaveUser(User user)

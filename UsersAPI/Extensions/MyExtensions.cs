@@ -22,7 +22,7 @@ namespace UsersAPI.Extensions
             serobj.Configure<JWT>(conf.GetSection("JWT"));  //this will map the values in appsittings with JWT class
 
             // For Identity
-            serobj.AddIdentity<IdentityUser, IdentityRole>()
+            serobj.AddIdentity<User, UserRole>()
                 .AddEntityFrameworkStores<UserContext>()
                 .AddDefaultTokenProviders();
 
@@ -42,8 +42,8 @@ namespace UsersAPI.Extensions
                  {
                      ValidateIssuer = true,
                      ValidateAudience = true,
-                     ValidAudience = conf["JWT:ValidAudience"],
-                     ValidIssuer = conf["JWT:ValidIssuer"],
+                     ValidAudience = conf["JWT:Audience"],
+                     ValidIssuer = conf["JWT:Issuer"],
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(conf["JWT:Secret"]))
                  };
              });
