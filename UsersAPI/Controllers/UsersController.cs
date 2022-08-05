@@ -22,7 +22,7 @@ namespace UsersAPI.Controllers
             _mapper = mapper;
         }
 
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         //[Roles]
         public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()//use IEnumerable or List

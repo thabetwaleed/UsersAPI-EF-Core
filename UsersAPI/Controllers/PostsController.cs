@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UsersAPI.Fillters;
 using UsersAPI.Model;
 using UsersAPI.Repos;
@@ -50,9 +51,14 @@ namespace UsersAPI.Controllers
             return Ok(PostsVM);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<PostViewModel>> Add([FromBody]PostViewModel post)
         {
+            //get the id from token that currently (the user is authentecated and authorized)
+            var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
+            post.UserId = int.Parse(userid);
+
             var model = await _postService.Add(_mapper.Map<Post>(post));
             var PostsVM = _mapper.Map<PostViewModel>(model);
 
