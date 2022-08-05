@@ -28,8 +28,11 @@ namespace UsersAPI.Controllers
         public async Task<ActionResult<List<PostViewModel>>> GetAllPosts()
         {
             //throw new Exception("error");
+            var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
             var posts = await _postService.Get<PostViewModel>();
-            var PostsVM = _mapper.Map<List<Post>>(posts);
+            var Myposts = posts.Where(a => a.UserId == int.Parse(userid));
+
+            var PostsVM = _mapper.Map<List<Post>>(Myposts);
 
 
             if (posts == null)
@@ -39,17 +42,28 @@ namespace UsersAPI.Controllers
             
         }
 
+        [Authorize]
         [HttpGet("{id}")]
        // [Roles]
         public async Task<ActionResult<PostViewModel>> GetPost(int id)
         {
-            var post =await _postService.GetId<PostViewModel>(id);
-            var PostsVM = _mapper.Map<PostViewModel>(post);
+            try
+            {
+                var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
+                var post = await _postService.GetId<PostViewModel>(id);
+                var PostsVM = _mapper.Map<PostViewModel>(post);
 
-            if (post == null)
+                if (post.UserId == int.Parse(userid))
+                {
+                    return Ok(PostsVM);
+                }
                 return NotFound();
-            return Ok(PostsVM);
-        }
+            }
+            catch(Exception e)
+            {
+                return NotFound("This id is invalid");
+            }
+         }
 
         [Authorize]
         [HttpPost]
@@ -65,21 +79,56 @@ namespace UsersAPI.Controllers
             return Ok(PostsVM);
         }
 
+        [Authorize]
         [HttpPut]
-        public ActionResult<PostViewModel> Update(PostViewModel post)
+        public async Task<ActionResult<PostViewModel>> Update(PostViewModel post)
         {
-            var model = _postService.Update(_mapper.Map<Post>(post));
-            var PostsVM = _mapper.Map<PostViewModel>(model);
+            try
+            {
+                var postmodel =await _postService.GetId<PostViewModel>(post.Id);
+                var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
+ 
+                if (postmodel.UserId == int.Parse(userid))
+                {
+                    post.UserId = int.Parse(userid);
+                    var model = _postService.Update(_mapper.Map<Post>(post));
+                    var PostsVM = _mapper.Map<PostViewModel>(model);
 
-            return Ok(PostsVM); 
+                    return Ok("The post Updated successfully");
+                }
+                return NotFound("This id is invalid");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Something error");
+            }
+
+
+
+
+             
         }
 
-
-        [HttpDelete]
+        [Authorize]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
-             await _postService.Delete<PostViewModel>(id);
-            return Ok();
+
+            try
+            {
+                var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
+                var post = await _postService.GetId<PostViewModel>(id);
+                if (post.UserId==int.Parse(userid))
+                {
+                    await _postService.Delete<PostViewModel>(id);
+                    return Ok("The post Deleted successfully");
+                }
+                return NotFound("This id is invalid");
+            }
+            catch(Exception ex)
+            {
+                return NotFound("This id is invalid");
+            }
         }
     }
 }
