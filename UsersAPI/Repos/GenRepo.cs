@@ -87,12 +87,23 @@ namespace UsersAPI.Repos
                 var CreatedDate=type.GetProperties().FirstOrDefault(c=>c.Name=="CreateDate");
                 var CreatedBy = type.GetProperties().FirstOrDefault(c => c.Name == "CreateBy");
 
-                var record = _context.Post.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+                //var record = _context.Post.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+               
+                //Projection Using .Select
+                var record1 = _context.Post.Select(
+                    r => new
+                    {
+                        id = r.Id,
+                        CreatedDate = r.CreateDate,
+                        CreatedBy = r.CreateBy,
+                    }
+
+                    ).FirstOrDefault(c => c.id == model.Id);
                  
                 
 
-                CreatedDate.SetValue(model,record.CreateDate);
-                CreatedBy.SetValue(model,record.CreateBy);
+                CreatedDate.SetValue(model,record1.CreatedDate);
+                CreatedBy.SetValue(model,record1.CreatedBy);
                 
             }
 
