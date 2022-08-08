@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Claims;
 using UsersAPI.Model;
 
 
@@ -12,8 +14,8 @@ namespace UsersAPI.Repos
     {
         public Task<List<TVM>?> Get<TVM>() where TVM:class,IBaseModel;
         public ValueTask<TVM?> GetId<TVM>(int id) where TVM:class,IBaseModel;
-        public Task<T> Add(T model);
-        public T Update(T model);
+        public Task<T> Add(T model,int userid);
+        public T Update(T model,int userid);
         public Task<TVM> Delete<TVM>(int id) where TVM:class,IBaseModel;
                
 
@@ -30,8 +32,19 @@ namespace UsersAPI.Repos
             _mapper = mapper;
         }
 
-        public async Task<T>  Add(T model)
+        public async Task<T>  Add(T model,int userid)
         {
+
+            var type = model.GetType();
+            var CreateDate = type.GetProperties().FirstOrDefault(c=>c.Name== "CreateDate");
+            var CreateBy = type.GetProperties().FirstOrDefault(c => c.Name == "CreateBy");
+            if (CreateDate!= null)
+            {
+                var CreateDatenow = DateTime.Now;
+                CreateDate.SetValue(model, CreateDatenow);
+                CreateBy.SetValue(model, userid);
+
+            }
               await _context.Set<T>().AddAsync(model);
               await  _context.SaveChangesAsync();
              return model;
@@ -49,6 +62,7 @@ namespace UsersAPI.Repos
 
         public async Task<List<TVM>> Get<TVM>() where TVM:class,IBaseModel
         {
+            
             return await _context.Set<T>().ProjectTo<TVM>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
@@ -58,8 +72,29 @@ namespace UsersAPI.Repos
 
         }
 
-        public T Update(T model)
+        public T Update(T model,int userid)
         {
+            var type = model.GetType();
+            var UpdateDate = type.GetProperties().FirstOrDefault(c => c.Name == "UpdateDate");
+            var UpdateBy = type.GetProperties().FirstOrDefault(c => c.Name == "UpdateBy");
+            
+            if (UpdateDate != null)
+            {
+                
+                UpdateDate.SetValue(model, DateTime.Now);
+                UpdateBy.SetValue(model, userid);
+                
+                var CreatedDate=type.GetProperties().FirstOrDefault(c=>c.Name=="CreateDate");
+                var CreatedBy = type.GetProperties().FirstOrDefault(c => c.Name == "CreateBy");
+
+                var record = _context.Post.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+                 
+                
+
+                CreatedDate.SetValue(model,record.CreateDate);
+                CreatedBy.SetValue(model,record.CreateBy);
+                
+            }
 
             _context.Set<T>().Update(model);
             _context.SaveChanges();

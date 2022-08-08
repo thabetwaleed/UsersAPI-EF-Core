@@ -6,6 +6,7 @@ using AutoMapper;
 using UsersAPI.ViewModel;
 using UsersAPI.Fillters;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace UsersAPI.Controllers
 {
@@ -22,7 +23,7 @@ namespace UsersAPI.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
         [HttpGet]
         //[Roles]
         public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()//use IEnumerable or List
@@ -51,16 +52,20 @@ namespace UsersAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<UserViewModel>> Add(UserViewModel user)
         {
-            var model=await _userService.Add(_mapper.Map<User>(user));
+            var model=await _userService.Add(_mapper.Map<User>(user),user.Id);
             var UsersVM = _mapper.Map<UserViewModel>(model);
 
             return Ok(UsersVM);
         }
 
+        [Authorize]
         [HttpPut]
         public ActionResult<UserViewModel> Update(UserViewModel user)
         {
-            var model=_userService.Update(_mapper.Map<User>(user));
+            var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
+
+
+            var model =_userService.Update(_mapper.Map<User>(user),int.Parse(userid));
             var UsersVM = _mapper.Map<List<UserViewModel>>(model);
 
             return Ok(UsersVM);

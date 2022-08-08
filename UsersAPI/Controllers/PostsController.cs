@@ -10,7 +10,7 @@ using UsersAPI.ViewModel;
 
 namespace UsersAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class PostsController : ControllerBase
     {
@@ -25,17 +25,20 @@ namespace UsersAPI.Controllers
         [Authorize]
         [HttpGet]
         //[Roles]
-        public async Task<ActionResult<List<PostViewModel>>> GetAllPosts()
+        [Route("[action]")]
+         
+        public async Task<ActionResult> GetAllPosts (int page,int size,string s)
         {
             //throw new Exception("error");
             var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
-            var posts = await _postService.Get<PostViewModel>();
-            var Myposts = posts.Where(a => a.UserId == int.Parse(userid));
+            var allposts =await _postService.GetAllPosts(page,size,s);
 
-            var PostsVM = _mapper.Map<List<Post>>(Myposts);
+            var Myposts = allposts.Where(a => a.UserId == int.Parse(userid));
+
+            var PostsVM =  _mapper.Map<List<PostViewModel>>(Myposts);
 
 
-            if (posts == null)
+            if (allposts == null)
                     return NotFound();
                 return Ok( PostsVM);
             
@@ -65,7 +68,7 @@ namespace UsersAPI.Controllers
             }
          }
 
-        [Authorize]
+       [Authorize]
         [HttpPost]
         public async Task<ActionResult<PostViewModel>> Add([FromBody]PostViewModel post)
         {
@@ -73,7 +76,7 @@ namespace UsersAPI.Controllers
             var userid = User.FindFirst(ClaimTypes.Sid)?.Value;
             post.UserId = int.Parse(userid);
 
-            var model = await _postService.Add(_mapper.Map<Post>(post));
+            var model = await _postService.Add(_mapper.Map<Post>(post),int.Parse(userid));
             var PostsVM = _mapper.Map<PostViewModel>(model);
 
             return Ok(PostsVM);
@@ -91,7 +94,7 @@ namespace UsersAPI.Controllers
                 if (postmodel.UserId == int.Parse(userid))
                 {
                     post.UserId = int.Parse(userid);
-                    var model = _postService.Update(_mapper.Map<Post>(post));
+                    var model = _postService.Update(_mapper.Map<Post>(post),int.Parse(userid));
                     var PostsVM = _mapper.Map<PostViewModel>(model);
 
                     return Ok("The post Updated successfully");
