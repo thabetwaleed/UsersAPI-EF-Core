@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq;
 using System.Security.Claims;
 using UsersAPI.Model;
@@ -16,7 +17,7 @@ namespace UsersAPI.Repos
         public ValueTask<TVM?> GetId<TVM>(int id) where TVM:class,IBaseModel;
         public Task<T> Add(T model,int userid);
         public T Update(T model,int userid);
-        public Task<TVM> Delete<TVM>(int id) where TVM:class,IBaseModel;
+        public Task<bool> Delete(int id);
                
 
     }
@@ -51,12 +52,25 @@ namespace UsersAPI.Repos
 
         }
         
-        public async Task<TVM>  Delete<TVM>(int id) where TVM:class,IBaseModel
+        public async Task<bool>  Delete(int id) 
         {
-             var _temp = await GetId<TVM>(id);
-             _context.Set<T>().Remove(_mapper.Map<T>(_temp));
-              await _context.SaveChangesAsync();
-              return _mapper.Map<TVM>(_temp);
+            try
+            {   
+                
+
+                var _temp = await _context.Set<T>().FindAsync(id);
+                var g=_context.Set<T>().Remove(_temp);
+                // _context.Entry(_temp).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+               // var variable= _context.Users.ToList();
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+             
 
         }
 
@@ -87,20 +101,27 @@ namespace UsersAPI.Repos
                 var CreatedDate=type.GetProperties().FirstOrDefault(c=>c.Name=="CreateDate");
                 var CreatedBy = type.GetProperties().FirstOrDefault(c => c.Name == "CreateBy");
 
-                //var record = _context.Post.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
-               
-                //Projection Using .Select
+
+                //var record2 = _mapper.Map<Post>(record1);
+                
+
+
+                //1- Projection Using .Select
                 var record1 = _context.Post.Select(
                     r => new
                     {
                         id = r.Id,
+                        
                         CreatedDate = r.CreateDate,
-                        CreatedBy = r.CreateBy,
+                        CreatedBy = r.CreateBy
                     }
 
-                    ).FirstOrDefault(c => c.id == model.Id);
-                 
-                
+                    ).AsTracking().FirstOrDefault(c => c.id == model.Id);
+
+                //2- var record1 = _context.Post.FirstOrDefault(c => c.Id == model.Id);
+
+                //3- var record1 = _context.Post.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+
 
                 CreatedDate.SetValue(model,record1.CreatedDate);
                 CreatedBy.SetValue(model,record1.CreatedBy);

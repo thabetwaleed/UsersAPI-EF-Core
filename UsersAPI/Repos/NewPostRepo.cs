@@ -10,6 +10,7 @@ namespace UsersAPI.Repos
     public interface INewPostRepo : IGenRepo<Post>
     {
         public  Task<List<Post>> GetAllPosts(int page,int size,string s);
+ 
     }
 
     public class NewPostRepo : GenRepo<Post>, INewPostRepo
@@ -27,6 +28,7 @@ namespace UsersAPI.Repos
 
             return await _context.Post.Where(x=>x.Title.Contains(s)).Skip<Post>(page*size).Take<Post>(size).ToListAsync();
         }
+
 
     }
 }

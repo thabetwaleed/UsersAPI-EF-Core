@@ -7,14 +7,15 @@ using UsersAPI.ViewModel;
 using UsersAPI.Fillters;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace UsersAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-
         INewUserRepo _userService;
         IMapper _mapper;
         public UsersController(INewUserRepo service,IMapper mapper)
@@ -23,7 +24,6 @@ namespace UsersAPI.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles ="Admin")]
         [HttpGet]
         //[Roles]
         public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()//use IEnumerable or List
@@ -71,12 +71,15 @@ namespace UsersAPI.Controllers
             return Ok(UsersVM);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<UserViewModel>> DeleteUser(int id)
         {
-           await _userService.Delete<UserViewModel>(id);
+
+
+           await _userService.DeletePosts(id);
+           await _userService.Delete(id);
  
-            return Ok();
+            return Ok("Deleted Successfully");
         }
     }
 }

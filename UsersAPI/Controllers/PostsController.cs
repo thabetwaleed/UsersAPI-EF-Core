@@ -123,7 +123,7 @@ namespace UsersAPI.Controllers
                 var post = await _postService.GetId<PostViewModel>(id);
                 if (post.UserId==int.Parse(userid))
                 {
-                    await _postService.Delete<PostViewModel>(id);
+                    await _postService.Delete(id);
                     return Ok("The post Deleted successfully");
                 }
                 return NotFound("This id is invalid");
